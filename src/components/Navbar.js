@@ -1,15 +1,21 @@
-// Navbar.js - Updated with correct icons for Log In and Sign In
+// Navbar.js - Enhanced with product search functionality
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState("");
   const [showNavbar, setShowNavbar] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(window.scrollY);
   const location = useLocation();
+  const navigate = useNavigate();
+  const searchRef = useRef(null);
 
   // Hide navbar on scroll down, show on scroll up
   useEffect(() => {
@@ -33,6 +39,20 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   useEffect(() => {
     setCartCount(3);
 
@@ -46,12 +66,83 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  const handleSearch = (e) => {
+  // Search products function
+  const searchProducts = async (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      setSearchError("");
+      return;
+    }
+
+    setSearchLoading(true);
+    setSearchError("");
+
+    try {
+      const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+      const response = await fetch(`${API_BASE_URL}/api/products?search=${encodeURIComponent(query)}&limit=5`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success && data.products.length > 0) {
+        setSearchResults(data.products);
+        setSearchError("");
+        setShowSearchResults(true);
+      } else {
+        setSearchResults([]);
+        setSearchError("No products found matching your search");
+        setShowSearchResults(true);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchError("Failed to search products. Please try again.");
+      setSearchResults([]);
+      setShowSearchResults(true);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  // Handle search input change with debounce
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    // Clear previous timeout
+    if (searchRef.current.timeout) {
+      clearTimeout(searchRef.current.timeout);
+    }
+    
+    // Set new timeout for debounced search
+    searchRef.current.timeout = setTimeout(() => {
+      searchProducts(query);
+    }, 300);
+  };
+
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      alert(`Searching for: ${searchQuery}`);
-      // Implement actual search logic here
+      // Navigate to shop page with search query
+      navigate(`/shop?search=${encodeURIComponent(searchQuery)}`);
+      setShowSearchResults(false);
+      setSearchQuery("");
     }
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+    setShowSearchResults(false);
+    setSearchQuery("");
+  };
+
+  const handleViewAllResults = () => {
+    navigate(`/shop?search=${encodeURIComponent(searchQuery)}`);
+    setShowSearchResults(false);
+    setSearchQuery("");
   };
 
   return (
@@ -160,15 +251,21 @@ const Navbar = () => {
             </li>
           </ul>
 
-          {/* Search Bar */}
-          <form className="d-flex me-3" onSubmit={handleSearch} style={{ height: '100%', display: 'flex', alignItems: 'center' }}>
-            <div className="input-group" style={{ width: "200px" }}>
+          {/* Search Bar with Results */}
+          <form 
+            ref={searchRef}
+            className="d-flex me-3 position-relative" 
+            onSubmit={handleSearchSubmit} 
+            style={{ height: '100%', display: 'flex', alignItems: 'center' }}
+          >
+            <div className="input-group" style={{ width: "280px" }}>
               <input
                 type="text"
                 className="form-control"
                 placeholder="Search products..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
+                onFocus={() => searchQuery && setShowSearchResults(true)}
                 style={{ 
                   height: '36px',
                   fontSize: '0.9rem',
@@ -180,9 +277,75 @@ const Navbar = () => {
                 type="submit"
                 style={{ height: '36px', padding: '0 12px' }}
               >
-                <i className="fas fa-search"></i>
+                {searchLoading ? (
+                  <div className="spinner-border spinner-border-sm" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                ) : (
+                  <i className="fas fa-search"></i>
+                )}
               </button>
             </div>
+
+            {/* Search Results Dropdown */}
+            {showSearchResults && (
+              <div 
+                className="search-results-dropdown position-absolute top-100 start-0 end-0 mt-1 bg-white rounded shadow-lg border"
+                style={{ zIndex: 1050, maxHeight: '400px', overflowY: 'auto' }}
+              >
+                {searchError ? (
+                  <div className="p-3 text-center text-muted">
+                    <i className="fas fa-search me-2"></i>
+                    {searchError}
+                  </div>
+                ) : searchResults.length > 0 ? (
+                  <>
+                    {searchResults.map((product) => (
+                      <div
+                        key={product._id}
+                        className="search-result-item p-3 border-bottom hover-bg-light"
+                        onClick={() => handleProductClick(product._id)}
+                        style={{ cursor: 'pointer', transition: 'background-color 0.2s' }}
+                      >
+                        <div className="d-flex align-items-center">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="rounded me-3"
+                            style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                          />
+                          <div className="flex-grow-1">
+                            <div className="fw-medium text-dark">{product.name}</div>
+                            <div className="small text-muted">{product.category}</div>
+                            <div className="text-primary fw-bold">${product.price}</div>
+                          </div>
+                          {product.isNew && (
+                            <span className="badge bg-primary ms-2">New</span>
+                          )}
+                          {product.isHot && (
+                            <span className="badge bg-danger ms-1">Hot</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    <div
+                      className="p-3 text-center border-top hover-bg-light"
+                      onClick={handleViewAllResults}
+                      style={{ cursor: 'pointer', transition: 'background-color 0.2s' }}
+                    >
+                      <span className="text-primary fw-medium">
+                        View all results for "{searchQuery}"
+                      </span>
+                    </div>
+                  </>
+                ) : searchQuery && !searchLoading && (
+                  <div className="p-3 text-center text-muted">
+                    <i className="fas fa-search me-2"></i>
+                    Type to search for products
+                  </div>
+                )}
+              </div>
+            )}
           </form>
 
           <ul className="navbar-nav" style={{ height: '100%', display: 'flex', alignItems: 'center' }}>
@@ -310,6 +473,16 @@ const Navbar = () => {
         .dropdown-item:hover {
           background: linear-gradient(45deg, #667eea, #764ba2);
           color: white;
+        }
+        .search-results-dropdown {
+          animation: fadeIn 0.2s ease-in-out;
+        }
+        .hover-bg-light:hover {
+          background-color: #f8f9fa !important;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </nav>

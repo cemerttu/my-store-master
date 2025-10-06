@@ -1,7 +1,4 @@
-// src/utils/api.js
-const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://mystore-backend.onrender.com"   // <-- Replace with your deployed backend URL
-    : "http://localhost:5000";                 // Local backend for dev
-
+// utils/api.js
+const API_BASE_URL = "https://backend-store-master.onrender.com";
+console.log("🔗 Frontend connecting to:", API_BASE_URL);
 export default API_BASE_URL;
