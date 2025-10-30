@@ -95,7 +95,7 @@ const Home = () => {
       buttonLink: "/shop"
     },
     {
-      title: "Summer Collection 2024",
+      title: "Summer Collection 2025",
       subtitle: "Fresh styles for the sunny season. Up to 40% off on selected items!",
       background: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1200&h=600&fit=crop",
       buttonText: "Explore Summer",
