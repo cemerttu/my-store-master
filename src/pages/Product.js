@@ -2,53 +2,84 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 
 const data = {
-  1: { 
-    name: "Wireless Bluetooth Headphones", 
-    price: 49.99, 
-    desc: "High-quality wireless headphones with noise cancellation. Perfect for music lovers and professionals.", 
-    image: "src/assets/1.jpg",
-    features: ["Noise Cancellation", "30hr Battery", "Quick Charge", "Comfort Fit"],
-    category: "Electronics",
-    rating: 4.5
+  1: {
+    name: "Men's Casual Shirt",
+    price: 1200,
+    desc: "Stylish and comfortable casual shirt perfect for any occasion. Made with premium cotton fabric.",
+    image:
+      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400&h=400&fit=crop",
+    features: [
+      "Premium Cotton",
+      "Comfortable Fit",
+      "Easy Care",
+      "Versatile Style",
+    ],
+    category: "Men's Fashion",
+    rating: 4.5,
   },
-  2: { 
-    name: "Smart Fitness Watch", 
-    price: 59.99, 
-    desc: "Track your fitness goals with this advanced smartwatch featuring heart rate monitoring and GPS.", 
-    image: "https://via.placeholder.com/500x500/28a745/ffffff?text=Smart+Watch",
-    features: ["Heart Rate Monitor", "GPS Tracking", "Water Resistant", "Sleep Tracking"],
-    category: "Electronics",
-    rating: 4.3
+  2: {
+    name: "Women's Summer Dress",
+    price: 2000,
+    desc: "Beautiful summer dress with a flattering silhouette. Perfect for warm days and special occasions.",
+    image:
+      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop",
+    features: [
+      "Breathable Fabric",
+      "Flattering Cut",
+      "Summer Style",
+      "Versatile Design",
+    ],
+    category: "Women's Fashion",
+    rating: 4.8,
   },
-  3: { 
-    name: "Professional Laptop Backpack", 
-    price: 79.99, 
-    desc: "Durable and stylish backpack with dedicated laptop compartment and multiple organizational pockets.", 
-    image: "https://via.placeholder.com/500x500/dc3545/ffffff?text=Backpack",
-    features: ["Laptop Compartment", "Water Resistant", "USB Charging Port", "Ergonomic Design"],
-    category: "Accessories",
-    rating: 4.7
+  3: {
+    name: "Men's Jeans",
+    price: 250,
+    desc: "Classic denim jeans with perfect fit and durability. Made with high-quality denim for lasting comfort.",
+    image:
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop",
+    features: [
+      "Premium Denim",
+      "Perfect Fit",
+      "Durable Design",
+      "Classic Style",
+    ],
+    category: "Men's Fashion",
+    rating: 4.3,
   },
 };
 
 const Product = () => {
   const { id } = useParams();
   const p = data[id];
-  if (!p) return <div className="container my-5"><h2>Product Not Found</h2></div>;
-  
+  if (!p)
+    return (
+      <div className="container my-5">
+        <h2>Product Not Found</h2>
+      </div>
+    );
+
   return (
     <div className="container my-5">
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
-          <li className="breadcrumb-item"><a href="/">Home</a></li>
-          <li className="breadcrumb-item"><a href="/shop">Shop</a></li>
+          <li className="breadcrumb-item">
+            <a href="/">Home</a>
+          </li>
+          <li className="breadcrumb-item">
+            <a href="/shop">Shop</a>
+          </li>
           <li className="breadcrumb-item active">{p.name}</li>
         </ol>
       </nav>
-      
+
       <div className="row">
         <div className="col-md-6">
-          <img src={p.image} alt={p.name} className="img-fluid rounded shadow" />
+          <img
+            src={p.image}
+            alt={p.name}
+            className="img-fluid rounded shadow"
+          />
         </div>
         <div className="col-md-6">
           <h1 className="fw-bold">{p.name}</h1>
@@ -61,7 +92,7 @@ const Product = () => {
           </div>
           <h3 className="text-primary mb-3">${p.price}</h3>
           <p className="lead">{p.desc}</p>
-          
+
           <div className="mb-4">
             <h6>Features:</h6>
             <div className="row">
@@ -73,11 +104,16 @@ const Product = () => {
               ))}
             </div>
           </div>
-          
+
           <div className="d-flex gap-3 mb-4">
-            <div className="input-group" style={{width: '140px'}}>
+            <div className="input-group" style={{ width: "140px" }}>
               <button className="btn btn-outline-secondary">-</button>
-              <input type="text" className="form-control text-center" value="1" readOnly />
+              <input
+                type="text"
+                className="form-control text-center"
+                value="1"
+                readOnly
+              />
               <button className="btn btn-outline-secondary">+</button>
             </div>
             <Link to="/cart" className="btn btn-primary btn-lg flex-fill">
@@ -85,7 +121,7 @@ const Product = () => {
               Add to Cart
             </Link>
           </div>
-          
+
           <div className="d-flex gap-2">
             <button className="btn btn-outline-secondary">
               <i className="fas fa-heart me-2"></i>Wishlist

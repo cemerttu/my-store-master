@@ -60,7 +60,7 @@ const ProductCard = ({ product }) => {
         <div className="mt-auto">
           <div className="d-flex align-items-center justify-content-between">
             <div>
-              <span className="fw-bold text-primary fs-5">${price}</span>
+              <span className="fw-bold text-primary fs-5">KSH{price}</span>
               {originalPrice && (
                 <span className="text-muted text-decoration-line-through ms-2 small">
                   ${originalPrice}

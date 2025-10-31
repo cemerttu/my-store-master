@@ -134,7 +134,7 @@ const Navbar = () => {
   };
 
   const handleProductClick = (productId) => {
-    navigate(`/product/${productId}`);
+    navigate(`/product/KSH${productId}`);
     setShowSearchResults(false);
     setSearchQuery("");
   };
