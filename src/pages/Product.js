@@ -6,7 +6,7 @@ const data = {
     name: "Wireless Bluetooth Headphones", 
     price: 49.99, 
     desc: "High-quality wireless headphones with noise cancellation. Perfect for music lovers and professionals.", 
-    image: "https://via.placeholder.com/500x500/007bff/ffffff?text=Headphones",
+    image: "src/assets/1.jpg",
     features: ["Noise Cancellation", "30hr Battery", "Quick Charge", "Comfort Fit"],
     category: "Electronics",
     rating: 4.5
