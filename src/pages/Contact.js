@@ -79,7 +79,7 @@ const Contact = () => {
                 </div>
                 <h5>Visit Our Store</h5>
                 <p className="text-muted mb-0">123 Fashion Avenue<br />Style District, NY 10001</p>
-                <small className="text-primary">Mon-Sat: 10AM-8PM</small>
+                <small className="text-primary">Mon-Fri: 10AM-8PM</small>
               </div>
             </div>
             <div className="col-md-4 text-center mb-4">
@@ -88,7 +88,7 @@ const Contact = () => {
                   <i className="fas fa-phone fa-2x text-success"></i>
                 </div>
                 <h5>Call Us</h5>
-                <p className="text-muted mb-0">+1 (555) 123-STYLE<br />+1 (555) 123-FASHION</p>
+                <p className="text-muted mb-0">0700399481 Reception<br /> 07086848384 Customer career</p>
                 <small className="text-success">24/7 Customer Support</small>
               </div>
             </div>
